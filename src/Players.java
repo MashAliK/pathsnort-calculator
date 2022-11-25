@@ -14,5 +14,7 @@ public final class Players {
             return 'U';
     }
 
+    public static String playerName(int p){return (p == L) ? "Left" : "Right";}
+
     public static int switchTurn(int turn){return (turn == L) ? R : L;}
 }

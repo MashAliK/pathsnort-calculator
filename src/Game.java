@@ -3,6 +3,7 @@ import java.util.Collections;
 public class Game {
     ArrayList<Chain> board;
     int turn;
+    private static final int targetDep = 0;
 
     public Game(int inpTurn){
         board = new ArrayList<>();
@@ -37,12 +38,15 @@ public class Game {
                 return false;
         return true;
     }
+
     public int stop(){
+        return stop(0);
+    }
+    private int stop(int recD){
         if(atStop()){
             int stopValue = 0;
-            for(Chain c: board){
+            for(Chain c: board)
                 stopValue = stopValue + ((c.getLeft() == Players.L) ? 1 : -1)*(c.size());
-            }
             return stopValue;
         }
         int moveCount = 0;
@@ -52,7 +56,18 @@ public class Game {
             for(int j = 1; j <= c.size(); j++){
                 if (c.legalMove(j,turn)) {
                     Game newGame = new Game(move(i,j),Players.switchTurn(turn));
-                    stops.add(newGame.stop());
+                    if(recD < targetDep) {
+                        for (int k = 0; k < recD; k++)
+                            System.out.print("\t");
+                        System.out.print(Players.playerName(turn) + " moving to node " + j + " in chain number " +
+                                (i + 1) + " (" + c + ")");
+                        if(recD != targetDep-1)
+                            System.out.println();
+                    }
+                    int moveStop = newGame.stop(recD+1);
+                    stops.add(moveStop);
+                    if(recD == targetDep-1)
+                        System.out.println(" (Resulting stop: "+moveStop+")");
                     moveCount++;
                 }
             }
@@ -62,5 +77,6 @@ public class Game {
         else
             return(Collections.min(stops));
     }
+
 
 }
